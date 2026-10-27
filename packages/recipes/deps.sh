@@ -170,3 +170,14 @@ dep_openssl_shared() {
         run_logged dep-openssl-shared make install_sw
     )
 }
+
+dep_libyaml() {
+    local src
+    src="$(unpack libyaml)"
+    (
+        cd "${src}"
+        run_logged dep-libyaml ./configure --host="${HOST_TRIPLE}" --prefix="${DEPS}" --disable-shared --enable-static
+        run_logged dep-libyaml make -j"${JOBS}"
+        run_logged dep-libyaml make install
+    )
+}

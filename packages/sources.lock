@@ -39,3 +39,40 @@ apr         1.7.6   https://archive.apache.org/dist/apr/apr-1.7.6.tar.bz2       
 apr-util    1.6.5   https://archive.apache.org/dist/apr/apr-util-1.6.5.tar.bz2                                                 96de1dd6f6a0476d2d2e7964926d8c1ddc3bb0e210e1b1812d3ba5a454a392e2
 phpmyadmin  5.2.3   https://files.phpmyadmin.net/phpMyAdmin/5.2.3/phpMyAdmin-5.2.3-all-languages.tar.gz                        12ba1c425fa4071abbd4e7668c9ebdeac0b0755a467a6d6d5026122bb47c102b
 adminer     6.2.0   https://github.com/vrana/adminer/releases/download/v6.2.0/adminer-6.2.0.php                                9047c00dfc8258c6046c6720d7d201eaa0ca016fa0fc554bf0c4c137306e1c16
+# --- Phase 4b -------------------------------------------------------------------------------------
+libyaml     0.2.5   https://github.com/yaml/libyaml/releases/download/0.2.5/yaml-0.2.5.tar.gz                                  c642ae9b75fee120b2d96c712538bd2cf283228d2337df2cf2988e3c02678ef4
+ruby-4.0    4.0.9   https://cache.ruby-lang.org/pub/ruby/4.0/ruby-4.0.9.tar.gz                                                 c35350682ff050b79702d57ade4516e7336063f510155d19fb2fb5b3f3909511
+ruby-3.4    3.4.9   https://cache.ruby-lang.org/pub/ruby/3.4/ruby-3.4.9.tar.gz                                                 7bb4d4f5e807cc27251d14d9d6086d182c5b25875191e44ab15b709cd7a7dd9c
+# MinIO: upstream archived the repository and stopped publishing binaries; last release built from source.
+minio       2025.10.15 https://github.com/minio/minio/archive/refs/tags/RELEASE.2025-10-15T17-29-55Z.tar.gz                   be6d0bd3696c3a13a35f02d3a0280b64319c67918b4501c5c3d87f96d000085c
+python-3.14-arm64  3.14.10 https://github.com/astral-sh/python-build-standalone/releases/download/20261026/cpython-3.14.10+20261026-aarch64-apple-darwin-install_only.tar.gz 30a18bcb9ab75e485b4bf4e5d783dde165571e7e42c56dff47a2d2c5345183a4
+python-3.14-x86_64 3.14.10 https://github.com/astral-sh/python-build-standalone/releases/download/20261026/cpython-3.14.10+20261026-x86_64-apple-darwin-install_only.tar.gz  01cedae5d4a66ac570e13cb35fa570d0e79ba8e9affd4518a5d85b6c2b98ff10
+python-3.13-arm64  3.13.18 https://github.com/astral-sh/python-build-standalone/releases/download/20261026/cpython-3.13.18+20261026-aarch64-apple-darwin-install_only.tar.gz e5af2fde6a937a0e0c795a0c595c4efb70578d57463a2657c819992b9b9acbac
+python-3.13-x86_64 3.13.18 https://github.com/astral-sh/python-build-standalone/releases/download/20261026/cpython-3.13.18+20261026-x86_64-apple-darwin-install_only.tar.gz  708be9e7df297f68bdae589ea9e62a621db5abe7708f79e851c41410347452d1
+python-3.12-arm64  3.12.16 https://github.com/astral-sh/python-build-standalone/releases/download/20261026/cpython-3.12.16+20261026-aarch64-apple-darwin-install_only.tar.gz fbf4afef53c2a6b72bb741bc06d5671a9dfaf87bd84e5aa73ac9b3d0d589f14e
+python-3.12-x86_64 3.12.16 https://github.com/astral-sh/python-build-standalone/releases/download/20261026/cpython-3.12.16+20261026-x86_64-apple-darwin-install_only.tar.gz  a962e47df522889eaa7ff0d6a56203f1079f68aabb65ffdbe8455f362bc769f3
+go-1.27-arm64   1.27.3  https://go.dev/dl/go1.27.3.darwin-arm64.tar.gz                                                         dd3908cf20959d798c1e06ebe5b72213f0505ce01373b40ce3110975a6cd99c2
+go-1.27-x86_64  1.27.3  https://go.dev/dl/go1.27.3.darwin-amd64.tar.gz                                                         b6f8e931e4ab497fcde6da8ae4499a58f9d258e55c8a80824a516eae5950a750
+go-1.26-arm64   1.26.10 https://go.dev/dl/go1.26.10.darwin-arm64.tar.gz                                                        0b5183492292ada170f9b561a834863808dd02edba599e4ad0e89899330020b3
+go-1.26-x86_64  1.26.10 https://go.dev/dl/go1.26.10.darwin-amd64.tar.gz                                                        e820ab780c273ae4a340b79d0f3c4313b74ee029aa3874792145d44b9f4f91da
+java-25-arm64   25.0.5  https://github.com/adoptium/temurin25-binaries/releases/download/jdk-25.0.5%2B8/OpenJDK25U-jdk_aarch64_mac_hotspot_25.0.5_8.tar.gz 36dc14d797aaff6d89aab302cd053fdba6207dfdcf772052fa7b023a94b0e857
+java-25-x86_64  25.0.5  https://github.com/adoptium/temurin25-binaries/releases/download/jdk-25.0.5%2B8/OpenJDK25U-jdk_x64_mac_hotspot_25.0.5_8.tar.gz     32cd4d2151c91aa00d0fc911edfd05245ed40fa6b1aa894d5f35c928cd67a59d
+java-21-arm64   21.0.13 https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.13%2B9/OpenJDK21U-jdk_aarch64_mac_hotspot_21.0.13_9.tar.gz bf036b35b071bfb2f54f2c0af8ee8d88afa95ee6eb3dce02c0f94cfc2524d04a
+java-21-x86_64  21.0.13 https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.13%2B9/OpenJDK21U-jdk_x64_mac_hotspot_21.0.13_9.tar.gz     9aa1d1c17ae5467a022679e7e0af5c00797d94ac462ed1a46f4db07a8a34a6dd
+bun-arm64       1.4.4   https://github.com/oven-sh/bun/releases/download/bun-v1.4.4/bun-darwin-aarch64.zip                     c240d7f0ccb90c263a849fcdb09b7ee62630d921348ed6aafda86b9d577bc510
+bun-x86_64      1.4.4   https://github.com/oven-sh/bun/releases/download/bun-v1.4.4/bun-darwin-x64.zip                         50a3491f73abc2fe81673171a85762d3bc2cc1680ccecadd983de99adf77977e
+deno-arm64      2.9.8   https://github.com/denoland/deno/releases/download/v2.9.8/deno-aarch64-apple-darwin.zip                9f0bf660393da2eaff044cdc7444cb08c73f235849b61d224d825a194ce7c98e
+deno-x86_64     2.9.8   https://github.com/denoland/deno/releases/download/v2.9.8/deno-x86_64-apple-darwin.zip                 4b2f5edd2639b7470f034238b321d7002d8dfb4726d8558f52c17afac370eb2c
+mongodb-9.0-arm64  9.0.4  https://fastdl.mongodb.org/osx/mongodb-macos-arm64-9.0.4.tgz                                         66b9ebbbb7218cfa774a95172e353698cc214d31cbb6d73be04978a01d5c288c
+mongodb-9.0-x86_64 9.0.4  https://fastdl.mongodb.org/osx/mongodb-macos-x86_64-9.0.4.tgz                                        cc7e5a17b9ccff0e1b2dab62858ad17bd519c87c4937fac89721bc4c6d326ef0
+mongodb-8.0-arm64  8.0.34 https://fastdl.mongodb.org/osx/mongodb-macos-arm64-8.0.34.tgz                                        3255cbf2e70cc5de04220046e006067d20068656d1bfa674828768a51d20d5a6
+mongodb-8.0-x86_64 8.0.34 https://fastdl.mongodb.org/osx/mongodb-macos-x86_64-8.0.34.tgz                                       3d391b8c41df069671afaa88ca21def057178aecce1813437539143b71f28152
+mongosh-arm64   2.14.0  https://github.com/mongodb-js/mongosh/releases/download/v2.14.0/mongosh-2.14.0-darwin-arm64.zip        caef22937440378922528db31733dd91636ef7aee9a7f99e5772253c03ffa81d
+mongosh-x86_64  2.14.0  https://github.com/mongodb-js/mongosh/releases/download/v2.14.0/mongosh-2.14.0-darwin-x64.zip          accb7a5e2220f74db652a2324e3dd0d64ba67315f42b7f4647ae907ddd8388fd
+meilisearch-arm64  1.56.0 https://github.com/meilisearch/meilisearch/releases/download/v1.56.0/meilisearch-macos-apple-silicon  8cf19d5d864fbd22c511c5ca420dd0403d70beb049a65a122861790f2d34f356
+meilisearch-x86_64 1.56.0 https://github.com/meilisearch/meilisearch/releases/download/v1.56.0/meilisearch-macos-amd64          c35faea63e6c6210d38c882cec147d000238774c4a408850487aed10eed19e2f
+# Typesense publishes no checksums; pinned from the first download (2026-10-27).
+typesense-arm64    30.2  https://dl.typesense.org/releases/30.2/typesense-server-30.2-darwin-arm64.tar.gz                      7d8d6d0c33930ad20ea23dd184250547b16615944be891b2078e8a075152fa7e
+typesense-x86_64   30.2  https://dl.typesense.org/releases/30.2/typesense-server-30.2-darwin-amd64.tar.gz                      6aa4d2d85838e03fdde9dcef4bf1584a46fc1840a215e5cbed288b63365eae75
+# Corresponding source of GPL vendor binaries (mirrored by scripts/publish-packages.sh, not built)
+typesense-src      30.2  https://github.com/typesense/typesense/archive/refs/tags/v30.2.tar.gz                                 98ce13b5f05b68ff280b2e4b463c9a0f3be303d2c83a1e18ffbddf90f2b19ad1

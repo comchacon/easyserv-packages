@@ -69,7 +69,8 @@ log() { printf '\033[1m==> %s\033[0m\n' "$*"; }
 # and the static .pc files of our deps require them. Versions only need to satisfy minimums.
 mkdir -p "${DEPS}/lib/pkgconfig"
 for system_lib in "zlib:z:1.2.12:" "bzip2:bz2:1.0.8:" "sqlite3:sqlite3:3.43.2:" "libcurl:curl:8.7.1:" \
-    "libxml-2.0:xml2:2.9.13:-I${SDKROOT}/usr/include/libxml2" "libedit:edit:3.1:"; do
+    "libxml-2.0:xml2:2.9.13:-I${SDKROOT}/usr/include/libxml2" "libedit:edit:3.1:" \
+    "libffi:ffi:3.4.0:-I${SDKROOT}/usr/include/ffi"; do
     IFS=: read -r pc_name lib_name lib_version cflags <<<"${system_lib}"
     printf 'Name: %s\nDescription: %s from the macOS SDK\nVersion: %s\nLibs: -l%s\nCflags: %s\n' \
         "${pc_name}" "${pc_name}" "${lib_version}" "${lib_name}" "${cflags}" >"${DEPS}/lib/pkgconfig/${pc_name}.pc"
@@ -90,7 +91,7 @@ fetch() {
     if [[ ! -f "${file}" ]] || [[ "$(shasum -a 256 "${file}" | cut -d' ' -f1)" != "${sha}" ]]; then
         log "Downloading ${url}" >&2
         # Command substitution does not inherit errexit in bash 3.2 – fail explicitly.
-        /usr/bin/curl -fL --retry 5 --retry-all-errors --connect-timeout 30 -o "${file}.part" "${url}" ||
+        /usr/bin/curl -fsSL --retry 5 --retry-all-errors --connect-timeout 30 -o "${file}.part" "${url}" ||
             { echo "Download failed: ${url}" >&2; exit 1; }
         mv "${file}.part" "${file}"
     fi

@@ -27,12 +27,24 @@ releases. Each package keeps its upstream license:
 | Mailpit | MIT | https://mailpit.axllent.org |
 | Composer | MIT | https://getcomposer.org |
 | acme.sh | GPL-3.0 | https://github.com/acmesh-official/acme.sh |
+| Python (python-build-standalone) | PSF-2.0 | https://github.com/astral-sh/python-build-standalone |
+| Ruby | Ruby License / BSD-2-Clause | https://www.ruby-lang.org |
+| Go | BSD-3-Clause | https://go.dev |
+| Java (Eclipse Temurin) | GPL-2.0 with Classpath Exception | https://adoptium.net (source: https://github.com/adoptium) |
+| Bun | MIT | https://bun.sh |
+| Deno | MIT | https://deno.com |
+| MongoDB Community Server | SSPL-1.0 | https://github.com/mongodb/mongo (`share/SOURCE.txt` names the tag) |
+| mongosh | Apache-2.0 | https://github.com/mongodb-js/mongosh |
+| Meilisearch | MIT | https://www.meilisearch.com |
+| Typesense | GPL-3.0 | https://typesense.org |
+| MinIO (last community release, upstream archived) | AGPL-3.0 | https://github.com/minio/minio |
+| libyaml (statically linked into Ruby) | MIT | https://github.com/yaml/libyaml |
 | OpenSSL (statically linked) | Apache-2.0 | https://www.openssl.org |
 | ICU (statically linked) | Unicode License v3 | https://icu.unicode.org |
 
 The exact upstream versions and source checksums are recorded in `packages/sources.lock` of the
-EasyServ source repository. The corresponding source archives of all GPL-licensed packages are
-attached to the same release.
+EasyServ source repository. The corresponding source archives of the GPL/AGPL packages built or mirrored by EasyServ (MariaDB,
+MySQL, dnsmasq, acme.sh, Typesense, MinIO) are attached to the same release.
 
 ## Build recipes
 

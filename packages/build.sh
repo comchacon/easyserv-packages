@@ -12,7 +12,7 @@ for recipe in deps nginx php services databases vendor; do
     source "${PKG_ROOT}/recipes/${recipe}.sh"
 done
 
-ALL="nginx php-8.5 php-8.4 dnsmasq memcached redis postgresql-18 postgresql-17 mariadb-11.4 mysql-8.4
+ALL="nginx apache php-8.5 php-8.4 dnsmasq memcached redis postgresql-18 postgresql-17 mariadb-11.4 mysql-8.4
      node-24 node-22 caddy mailpit composer acme-sh"
 
 [[ $# -gt 0 ]] || { echo "Usage: $0 <package…|all>  (${ALL//$'\n'/ })" >&2; exit 2; }
@@ -21,6 +21,7 @@ ALL="nginx php-8.5 php-8.4 dnsmasq memcached redis postgresql-18 postgresql-17 m
 for target in "$@"; do
     case "${target}" in
     nginx) build_nginx ;;
+    apache) build_apache ;;
     php-*) build_php "${target}" ;;
     dnsmasq | memcached | redis | caddy | mailpit | composer) "build_${target}" ;;
     acme-sh) build_acme_sh ;;

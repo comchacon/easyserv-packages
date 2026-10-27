@@ -78,3 +78,39 @@ build_redis() {
         "links": {"bin": ["bin/redis-server", "bin/redis-cli", "bin/redis-benchmark"]}
     }'
 }
+
+# Apache httpd with bundled APR/APR-util (installed into the package), static OpenSSL and PCRE2.
+build_apache() {
+    local version major src
+    version="$(source_field httpd 2)"
+    major="${version%.*}"
+    build_dep openssl
+    build_dep pcre2
+    log "Building Apache httpd ${version} (${ARCH})"
+    rm -f "${LOGS}/apache.log"
+    stage_prefix apache "${major}" "${version}"
+    src="$(unpack httpd)"
+    local apr apr_util
+    apr="$(unpack apr)"
+    apr_util="$(unpack apr-util)"
+    mv "${apr}" "${src}/srclib/apr"
+    mv "${apr_util}" "${src}/srclib/apr-util"
+    (
+        cd "${src}"
+        run_logged apache ./configure --host="${HOST_TRIPLE}" --prefix="${PREFIX}" \
+            --with-included-apr --with-expat="${SDKROOT}/usr" --with-z="${SDKROOT}/usr" \
+            --with-pcre="${DEPS}/bin/pcre2-config" \
+            --enable-ssl --with-ssl="${DEPS}" \
+            --enable-mods-shared=reallyall --with-mpm=event \
+            --disable-http2 --disable-brotli --disable-md --disable-lua --disable-xml2enc --disable-proxy-html
+        run_logged apache make -j"${JOBS}"
+        run_logged apache make install DESTDIR="${DESTDIR_STAGE}"
+    )
+    rm -rf "${ROOT}/manual" "${ROOT}/man" "${ROOT}/htdocs" "${ROOT}/cgi-bin" "${ROOT}/build/libtool"
+    # httpd links the bundled APR at its final install location; use the staged copy for the test.
+    DYLD_LIBRARY_PATH="${ROOT}/lib" "${ROOT}/bin/httpd" -v | head -1
+    package_artifact apache "${major}" "${version}" "${ROOT}" '{
+        "displayName": "Apache", "category": "webserver", "service": "apache",
+        "links": {"bin": ["bin/httpd", "bin/apachectl", "bin/ab", "bin/htpasswd"]}
+    }'
+}

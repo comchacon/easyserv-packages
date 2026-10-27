@@ -105,3 +105,39 @@ EOF
         "links": {"bin": ["bin/acme.sh"]}
     }'
 }
+
+build_phpmyadmin() {
+    local major="5.2" version src
+    version="$(source_field phpmyadmin 2)"
+    log "Packaging phpMyAdmin ${version}"
+    stage_prefix phpmyadmin "${major}" "${version}"
+    src="$(unpack phpmyadmin)"
+    mkdir -p "${ROOT}"
+    cp -R "${src}/." "${ROOT}/"
+    rm -rf "${ROOT}/setup" "${ROOT}/examples" "${ROOT}/doc/html/_sources"
+    # The package is root-owned: configuration and temp files live in the EasyServ tree.
+    local vendor="${ROOT}/libraries/vendor_config.php"
+    sed -i '' \
+        -e "s|'tempDir' => ROOT_PATH . 'tmp' . DIRECTORY_SEPARATOR,|'tempDir' => '/Applications/EasyServ/tmp/phpmyadmin/',|" \
+        -e "s|'configFile' => ROOT_PATH . 'config.inc.php',|'configFile' => '/Applications/EasyServ/etc/phpmyadmin/config.inc.php',|" \
+        -e "s|'versionCheckDefault' => true,|'versionCheckDefault' => false,|" \
+        "${vendor}"
+    grep -q "/Applications/EasyServ/etc/phpmyadmin/config.inc.php" "${vendor}" || { echo "vendor_config.php patch failed" >&2; exit 1; }
+    grep -q "/Applications/EasyServ/tmp/phpmyadmin/" "${vendor}" || { echo "vendor_config.php patch failed" >&2; exit 1; }
+    package_artifact phpmyadmin "${major}" "${version}" "${ROOT}" '{
+        "displayName": "phpMyAdmin", "category": "tool"
+    }'
+}
+
+build_adminer() {
+    local major="6" version file
+    version="$(source_field adminer 2)"
+    log "Packaging Adminer ${version}"
+    stage_prefix adminer "${major}" "${version}"
+    file="$(fetch adminer)"
+    mkdir -p "${ROOT}"
+    install -m 0644 "${file}" "${ROOT}/adminer.php"
+    package_artifact adminer "${major}" "${version}" "${ROOT}" '{
+        "displayName": "Adminer", "category": "tool"
+    }'
+}

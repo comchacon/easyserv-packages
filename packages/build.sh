@@ -13,7 +13,7 @@ for recipe in deps nginx php services databases vendor; do
 done
 
 ALL="nginx apache php-8.5 php-8.4 dnsmasq memcached redis postgresql-18 postgresql-17 mariadb-11.4 mysql-8.4
-     node-24 node-22 caddy mailpit composer acme-sh"
+     node-24 node-22 caddy mailpit composer acme-sh phpmyadmin adminer"
 
 [[ $# -gt 0 ]] || { echo "Usage: $0 <package…|all>  (${ALL//$'\n'/ })" >&2; exit 2; }
 [[ "$1" == "all" ]] && set -- ${ALL}
@@ -23,7 +23,7 @@ for target in "$@"; do
     nginx) build_nginx ;;
     apache) build_apache ;;
     php-*) build_php "${target}" ;;
-    dnsmasq | memcached | redis | caddy | mailpit | composer) "build_${target}" ;;
+    dnsmasq | memcached | redis | caddy | mailpit | composer | phpmyadmin | adminer) "build_${target}" ;;
     acme-sh) build_acme_sh ;;
     postgresql-*) build_postgresql "${target}" ;;
     mariadb-*) build_mariadb "${target}" ;;

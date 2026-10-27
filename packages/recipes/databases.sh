@@ -25,9 +25,11 @@ build_postgresql() {
         run_logged "${source}" make -j"${JOBS}" world-bin
         run_logged "${source}" make install-world-bin DESTDIR="${DESTDIR_STAGE}"
     )
+    # Make the package relocatable: libpq & co. are referenced via @loader_path instead of the
+    # absolute install prefix (also lets the staged build run in tests).
+    relink_bundled "${ROOT}" "${PREFIX}/lib"
     "${ROOT}/bin/postgres" --version
-    # psql links libpq at its final install location; point dyld at the staged copy for the test.
-    DYLD_LIBRARY_PATH="${ROOT}/lib" "${ROOT}/bin/psql" --version
+    "${ROOT}/bin/psql" --version
     package_artifact postgresql "${major}" "${version}" "${ROOT}" '{
         "displayName": "PostgreSQL", "category": "database", "service": "postgresql",
         "links": {"bin": ["bin/psql", "bin/pg_dump", "bin/pg_dumpall", "bin/pg_restore", "bin/createdb",

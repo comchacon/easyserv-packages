@@ -37,3 +37,5 @@ mailpit-x86_64  1.32.0  https://github.com/axllent/mailpit/releases/download/v1.
 httpd       2.4.69  https://archive.apache.org/dist/httpd/httpd-2.4.69.tar.bz2                                                 c5e6ebc66e349b87d7fc6916ae7cc2a808ed348003de134cf9e9d89d3e2cc73d
 apr         1.7.6   https://archive.apache.org/dist/apr/apr-1.7.6.tar.bz2                                                      49030d92d2575da735791b496dc322f3ce5cff9494779ba8cc28c7f46c5deb32
 apr-util    1.6.5   https://archive.apache.org/dist/apr/apr-util-1.6.5.tar.bz2                                                 96de1dd6f6a0476d2d2e7964926d8c1ddc3bb0e210e1b1812d3ba5a454a392e2
+phpmyadmin  5.2.3   https://files.phpmyadmin.net/phpMyAdmin/5.2.3/phpMyAdmin-5.2.3-all-languages.tar.gz                        12ba1c425fa4071abbd4e7668c9ebdeac0b0755a467a6d6d5026122bb47c102b
+adminer     6.2.0   https://github.com/vrana/adminer/releases/download/v6.2.0/adminer-6.2.0.php                                9047c00dfc8258c6046c6720d7d201eaa0ca016fa0fc554bf0c4c137306e1c16

@@ -6,7 +6,7 @@ build_dep() {
     if dep_built "${name}"; then
         return 0
     fi
-    log "Building dependency ${name} $(source_field "${name}" 2) (${ARCH})"
+    log "Building dependency ${name} $(dep_version "${name}") (${ARCH})"
     rm -f "${LOGS}/dep-${name}.log"
     "dep_${name//-/_}"
     mark_dep_built "${name}"
@@ -20,7 +20,7 @@ dep_openssl() {
         cd "${src}"
         # The OpenSSL Configure script adds -arch itself.
         run_logged dep-openssl env -u CFLAGS -u CXXFLAGS -u CPPFLAGS -u LDFLAGS CC="$(xcrun -f clang)" \
-            ./Configure "${target}" no-shared no-tests no-docs no-apps \
+            ./Configure "${target}" no-shared no-tests no-docs \
             --prefix="${DEPS}" --libdir=lib --openssldir="/Applications/EasyServ/etc/openssl" \
             "-mmacosx-version-min=${MIN_MACOS}"
         run_logged dep-openssl make -j"${JOBS}"
@@ -150,5 +150,23 @@ dep_libevent() {
             --disable-openssl --disable-samples --disable-libevent-regress
         run_logged dep-libevent make -j"${JOBS}"
         run_logged dep-libevent make install
+    )
+}
+
+# Shared OpenSSL in a separate prefix, only for MySQL: its CMake (WITH_SSL=<path>) bundles the
+# dylibs into the package and rewrites them to @loader_path itself.
+OPENSSL_SHARED="${WORK}/deps-shared/${ARCH}"
+
+dep_openssl_shared() {
+    local src
+    src="$(unpack openssl)"
+    (
+        cd "${src}"
+        run_logged dep-openssl-shared env -u CFLAGS -u CXXFLAGS -u CPPFLAGS -u LDFLAGS CC="$(xcrun -f clang)" \
+            ./Configure "darwin64-${ARCH}-cc" shared no-tests no-docs \
+            --prefix="${OPENSSL_SHARED}" --libdir=lib --openssldir="/Applications/EasyServ/etc/openssl" \
+            "-mmacosx-version-min=${MIN_MACOS}"
+        run_logged dep-openssl-shared make -j"${JOBS}"
+        run_logged dep-openssl-shared make install_sw
     )
 }

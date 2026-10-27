@@ -47,8 +47,7 @@ build_mariadb() {
     stage_prefix mariadb "${major}" "${version}"
     src="$(unpack "${source}")"
     run_logged "${source}" cmake -S "${src}" -B "${src}/_build" \
-        -DCMAKE_BUILD_TYPE=RelWithDebInfo \
-        -DCMAKE_C_FLAGS_RELWITHDEBINFO="-O2" -DCMAKE_CXX_FLAGS_RELWITHDEBINFO="-O2" \
+        -DCMAKE_BUILD_TYPE=Release \
         -DCMAKE_INSTALL_PREFIX="${PREFIX}" \
         -DCMAKE_OSX_ARCHITECTURES="${ARCH}" \
         -DCMAKE_OSX_DEPLOYMENT_TARGET="${MIN_MACOS}" \
@@ -83,13 +82,24 @@ build_mysql() {
     local source="$1" version major src
     version="$(source_field "${source}" 2)"
     major="${version%.*}"
-    build_dep openssl
+    build_dep openssl-shared
     build_tool_bison
+    if [[ "${REPACKAGE:-}" == "1" && -d "${STAGE}/mysql-${version}" ]]; then
+        # Reuse the staged install (skips the ~30 min compile), only redo post-processing + packaging.
+        PREFIX="${INSTALL_ROOT}/mysql/${major}/${version}"
+        DESTDIR_STAGE="${STAGE}/mysql-${version}"
+        ROOT="${DESTDIR_STAGE}${PREFIX}"
+        finish_mysql "${major}" "${version}"
+        return
+    fi
     log "Building MySQL ${version} (${ARCH})"
     rm -f "${LOGS}/${source}.log"
     stage_prefix mysql "${major}" "${version}"
     src="$(unpack "${source}")"
-    run_logged "${source}" cmake -S "${src}" -B "${src}/_build" \
+    # MySQL bundles its own ICU/zlib/zstd; keep our static deps (ICU 78 headers!) out of its include
+    # and library search paths.
+    local mysql_env=(env -u CPPFLAGS LDFLAGS="-arch ${ARCH}")
+    run_logged "${source}" "${mysql_env[@]}" cmake -S "${src}" -B "${src}/_build" \
         -DCMAKE_BUILD_TYPE=Release \
         -DCMAKE_INSTALL_PREFIX="${PREFIX}" \
         -DCMAKE_OSX_ARCHITECTURES="${ARCH}" \
@@ -101,14 +111,25 @@ build_mysql() {
         -DMYSQL_DATADIR=/Applications/EasyServ/db/mysql/"${major}" \
         -DMYSQL_UNIX_ADDR=/Applications/EasyServ/tmp/mysql-"${major}".sock \
         -DSYSCONFDIR=/Applications/EasyServ/etc/mysql/"${major}" \
-        -DWITH_SSL="${DEPS}" -DWITH_ZLIB=bundled -DWITH_ZSTD=bundled -DWITH_LZ4=bundled \
+        -DWITH_SSL="${OPENSSL_SHARED}" -DWITH_ZLIB=bundled -DWITH_ZSTD=bundled -DWITH_LZ4=bundled \
         -DWITH_ICU=bundled -DWITH_PROTOBUF=bundled -DWITH_EDITLINE=bundled -DWITH_FIDO=none \
         -DWITH_UNIT_TESTS=OFF -DWITH_ROUTER=OFF -DWITH_NDB=OFF -DWITH_NDBCLUSTER=OFF \
         -DWITH_AUTHENTICATION_LDAP=OFF -DWITH_AUTHENTICATION_KERBEROS=OFF -DWITH_AUTHENTICATION_FIDO=OFF \
         -DWITH_AUTHENTICATION_CLIENT_PLUGINS=OFF -DWITH_MYSQLX=ON -DENABLED_LOCAL_INFILE=ON
-    run_logged "${source}" cmake --build "${src}/_build" -j "${JOBS}"
+    run_logged "${source}" "${mysql_env[@]}" cmake --build "${src}/_build" -j "${JOBS}"
     run_logged "${source}" env DESTDIR="${DESTDIR_STAGE}" cmake --install "${src}/_build"
     rm -rf "${ROOT}/share/man" "${ROOT}/share/doc" "${ROOT}/mysql-test"
+    finish_mysql "${major}" "${version}"
+}
+
+finish_mysql() {
+    local major="$1" version="$2"
+    # MySQL copies the shared OpenSSL into lib/ and lib/plugin/ but keeps build-time references.
+    relink_bundled "${ROOT}" "${OPENSSL_SHARED}/lib"
+    # Test and developer tools are not needed at runtime.
+    rm -f "${ROOT}"/bin/mysql_client_test "${ROOT}"/bin/mysqltest* "${ROOT}"/bin/mysqlxtest \
+        "${ROOT}"/bin/mysql_keyring_encryption_test "${ROOT}"/bin/mysql_test_event_tracking
+    rm -f "${ROOT}"/lib/plugin/*test*
     "${ROOT}/bin/mysqld" --version
     package_artifact mysql "${major}" "${version}" "${ROOT}" '{
         "displayName": "MySQL", "category": "database", "service": "mysql",

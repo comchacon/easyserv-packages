@@ -149,8 +149,57 @@ run_logged() {
 }
 
 # dep_built <name> – marker check so static deps are built once per arch
-dep_built() { [[ -f "${DEPS}/.built-$1-$(source_field "$1" 2)" ]]; }
-mark_dep_built() { touch "${DEPS}/.built-$1-$(source_field "$1" 2)"; }
+# (dependency variants such as openssl-shared use the version of their base source)
+dep_version() { source_field "${1%-shared}" 2; }
+dep_built() { [[ -f "${DEPS}/.built-$1-$(dep_version "$1")" ]]; }
+mark_dep_built() { touch "${DEPS}/.built-$1-$(dep_version "$1")"; }
+
+# relink_bundled <root> <build_lib_dir>
+# Rewrites references to dylibs from a build-time directory (e.g. a shared OpenSSL) to the copies
+# bundled inside the package, using @loader_path-relative paths, then re-signs modified files.
+relink_bundled() {
+    local root="$1" old="$2"
+    /usr/bin/python3 - "${root}" "${old}" <<'EOF'
+import os, subprocess, sys
+root, old = sys.argv[1], sys.argv[2].rstrip("/")
+
+def macho(path):
+    out = subprocess.run(["file", "-b", path], capture_output=True, text=True).stdout
+    return "Mach-O" in out
+
+def deps(path):
+    out = subprocess.run(["otool", "-L", path], capture_output=True, text=True).stdout.splitlines()[1:]
+    return [line.strip().split(" (")[0] for line in out]
+
+changed = []
+for directory, _, files in os.walk(root):
+    for name in files:
+        path = os.path.join(directory, name)
+        if os.path.islink(path) or not macho(path):
+            continue
+        args = []
+        for dep in deps(path):
+            if not dep.startswith(old + "/"):
+                continue
+            lib = os.path.basename(dep)
+            # Prefer a copy next to the file, otherwise <root>/lib.
+            candidates = [os.path.join(directory, lib), os.path.join(root, "lib", lib)]
+            target = next((c for c in candidates if os.path.exists(c)), None)
+            if target is None:
+                sys.exit(f"relink: no bundled copy of {lib} for {path}")
+            rel = os.path.relpath(target, directory)
+            new = "@loader_path/" + rel
+            if os.path.samefile(target, path):
+                args += ["-id", new]
+            else:
+                args += ["-change", dep, new]
+        if args:
+            subprocess.run(["install_name_tool", *args, path], check=True, stderr=subprocess.DEVNULL)
+            subprocess.run(["codesign", "--force", "--sign", "-", path], check=True, stderr=subprocess.DEVNULL)
+            changed.append(os.path.relpath(path, root))
+print(f"    relinked {len(changed)} files")
+EOF
+}
 
 # Mach-O files may only link against macOS system libraries and libraries inside their own
 # package (absolute install prefix or @loader_path/@executable_path/@rpath).

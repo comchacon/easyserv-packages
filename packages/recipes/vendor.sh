@@ -62,7 +62,14 @@ build_composer() {
     # Runs with the php found in PATH, i.e. the EasyServ shim honouring .php-version.
     cat >"${ROOT}/bin/composer" <<'EOF'
 #!/bin/sh
-exec php "$(dirname "$0")/../libexec/composer.phar" "$@"
+# Resolve package/bin symlinks to the real location inside the package.
+self="$0"
+while [ -L "$self" ]; do
+    link="$(readlink "$self")"
+    case "$link" in /*) self="$link" ;; *) self="$(dirname "$self")/$link" ;; esac
+done
+here="$(cd "$(dirname "$self")" && pwd)"
+exec php "$here/../libexec/composer.phar" "$@"
 EOF
     chmod 0755 "${ROOT}/bin/composer"
     package_artifact composer "${major}" "${version}" "${ROOT}" '{
@@ -82,7 +89,14 @@ build_acme_sh() {
     chmod 0755 "${ROOT}/libexec/acme.sh/acme.sh"
     cat >"${ROOT}/bin/acme.sh" <<'EOF'
 #!/bin/sh
-exec "$(dirname "$0")/../libexec/acme.sh/acme.sh" --home "$(dirname "$0")/../libexec/acme.sh" \
+# Resolve package/bin symlinks to the real location inside the package.
+self="$0"
+while [ -L "$self" ]; do
+    link="$(readlink "$self")"
+    case "$link" in /*) self="$link" ;; *) self="$(dirname "$self")/$link" ;; esac
+done
+here="$(cd "$(dirname "$self")" && pwd)"
+exec "$here/../libexec/acme.sh/acme.sh" --home "$here/../libexec/acme.sh" \
     --config-home /Applications/EasyServ/etc/acme "$@"
 EOF
     chmod 0755 "${ROOT}/bin/acme.sh"

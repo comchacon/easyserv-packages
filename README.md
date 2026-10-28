@@ -40,13 +40,22 @@ releases. Each package keeps its upstream license:
 | MinIO (last community release, upstream archived) | AGPL-3.0 | https://github.com/minio/minio |
 | frp client (frpc) | Apache-2.0 | https://github.com/fatedier/frp |
 | cloudflared (signed by Cloudflare) | Apache-2.0 | https://github.com/cloudflare/cloudflared |
-| libyaml (statically linked into Ruby) | MIT | https://github.com/yaml/libyaml |
+| libyaml (statically linked into Ruby and the PHP yaml extension) | MIT | https://github.com/yaml/libyaml |
+| PHP extensions from PECL: igbinary, msgpack, apcu, redis, memcached, pcov, yaml | PHP-3.01 / BSD | https://pecl.php.net |
+| Xdebug | Xdebug License (PHP-3.01 based) | https://xdebug.org |
+| MongoDB PHP driver (incl. libmongoc/libbson) | Apache-2.0 | https://github.com/mongodb/mongo-php-driver |
+| libpq (statically linked into pgsql/pdo_pgsql) | PostgreSQL License | https://www.postgresql.org |
+| libmemcached-awesome (statically linked into memcached) | BSD-3-Clause | https://github.com/awesomized/libmemcached |
+| tidy-html5 (statically linked into tidy) | W3C | https://github.com/htacg/tidy-html5 |
+| GMP (statically linked into the gmp extension) | LGPL-3.0 | https://gmplib.org |
+| libintl from GNU gettext (statically linked into the gettext extension) | LGPL-2.1 | https://www.gnu.org/software/gettext/ |
 | OpenSSL (statically linked) | Apache-2.0 | https://www.openssl.org |
 | ICU (statically linked) | Unicode License v3 | https://icu.unicode.org |
 
 The exact upstream versions and source checksums are recorded in `packages/sources.lock` of the
-EasyServ source repository. The corresponding source archives of the GPL/AGPL packages built or mirrored by EasyServ (MariaDB,
-MySQL, dnsmasq, acme.sh, Typesense, MinIO) are attached to the same release.
+EasyServ source repository. The corresponding source archives of the GPL/AGPL/LGPL components built or mirrored by EasyServ (MariaDB,
+MySQL, dnsmasq, acme.sh, Typesense, MinIO, GMP, gettext) are attached to the same release; the PHP build recipe
+(`packages/recipes/php.sh`) allows relinking the LGPL libraries into the extension modules.
 
 ## Build recipes
 

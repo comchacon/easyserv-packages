@@ -181,3 +181,82 @@ dep_libyaml() {
         run_logged dep-libyaml make install
     )
 }
+
+# --- PHP extension libraries (Phase 5d), all static so the extension modules stay self-contained ---
+
+# libpq for pgsql/pdo_pgsql, from the PostgreSQL source. libpgcommon/libpgport are merged into libpq.a
+# (the _shlib variants – libpq uses their symbol names) because PHP only links -lpq.
+dep_libpq() {
+    build_dep openssl
+    local src
+    src="$(unpack postgresql-18)"
+    sed -i '' 's/grep -v -e __cxa_atexit -e __tsan_func_exit | grep exit/grep -v -e __cxa_atexit -e __tsan_func_exit -e "_atexit$$" -e "_pthread_exit$$" | grep exit/' \
+        "${src}/src/interfaces/libpq/Makefile"
+    (
+        cd "${src}"
+        export PKG_CONFIG="${TOOLS}/pkgconf --static"
+        run_logged dep-libpq ./configure --host="${HOST_TRIPLE}" --prefix="${DEPS}" --with-openssl --without-icu \
+            --without-readline --without-gssapi --without-ldap --disable-nls
+        for dir in src/include src/common src/port src/interfaces/libpq src/bin/pg_config; do
+            run_logged dep-libpq make -C "${dir}" -j"${JOBS}"
+            run_logged dep-libpq make -C "${dir}" install
+        done
+    )
+    rm -f "${DEPS}"/lib/libpq*.dylib
+    libtool -static -o "${DEPS}/lib/libpq-merged.a" "${DEPS}/lib/libpq.a" "${DEPS}/lib/libpgcommon_shlib.a" "${DEPS}/lib/libpgport_shlib.a"
+    mv "${DEPS}/lib/libpq-merged.a" "${DEPS}/lib/libpq.a"
+}
+
+dep_gmp() {
+    local src
+    src="$(unpack gmp)"
+    (
+        cd "${src}"
+        run_logged dep-gmp ./configure --host="${HOST_TRIPLE}" --prefix="${DEPS}" --disable-shared --enable-static --with-pic
+        run_logged dep-gmp make -j"${JOBS}"
+        run_logged dep-gmp make install
+    )
+}
+
+# libintl only (gettext-runtime), for the gettext extension. Own prefix: libintl.h redefines setlocale(), which
+# must not leak into the rest of PHP through the shared include directory.
+dep_gettext() {
+    local src
+    src="$(unpack gettext)"
+    (
+        cd "${src}/gettext-runtime"
+        # Without CoreFoundation lookups, so libintl.a only needs libiconv (PHP sets locales via setlocale anyway).
+        export gt_cv_func_CFPreferencesCopyAppValue=no gt_cv_func_CFLocaleCopyCurrent=no \
+            gt_cv_func_CFLocaleCopyPreferredLanguages=no
+        run_logged dep-gettext ./configure --host="${HOST_TRIPLE}" --prefix="${DEPS}/gettext" --disable-shared --enable-static \
+            --with-included-gettext --disable-java --disable-csharp --disable-libasprintf --without-emacs \
+            --with-libiconv-prefix="${SDKROOT}/usr" --disable-c++
+        run_logged dep-gettext make -C intl -j"${JOBS}"
+        run_logged dep-gettext make -C intl install
+    )
+}
+
+dep_tidy_html5() {
+    local src
+    src="$(unpack tidy-html5)"
+    run_logged dep-tidy cmake -S "${src}" -B "${src}/_build" -DCMAKE_INSTALL_PREFIX="${DEPS}" -DCMAKE_BUILD_TYPE=Release \
+        -DCMAKE_OSX_ARCHITECTURES="${ARCH}" -DCMAKE_OSX_DEPLOYMENT_TARGET="${MIN_MACOS}" -DCMAKE_POLICY_VERSION_MINIMUM=3.5 \
+        -DBUILD_SHARED_LIB=OFF -DSUPPORT_LOCALIZATIONS=OFF -DTIDY_COMPAT_HEADERS=ON
+    run_logged dep-tidy cmake --build "${src}/_build" -j "${JOBS}"
+    run_logged dep-tidy cmake --install "${src}/_build"
+    # The static library is called libtidy_static.a; PHP links -ltidy.
+    [[ -f "${DEPS}/lib/libtidy.a" ]] || ln -sf libtidy_static.a "${DEPS}/lib/libtidy.a"
+    rm -f "${DEPS}"/lib/libtidy*.dylib
+}
+
+dep_libmemcached() {
+    local src
+    src="$(unpack libmemcached)"
+    run_logged dep-libmemcached cmake -S "${src}" -B "${src}/_build" -DCMAKE_INSTALL_PREFIX="${DEPS}" -DCMAKE_BUILD_TYPE=Release \
+        -DCMAKE_OSX_ARCHITECTURES="${ARCH}" -DCMAKE_OSX_DEPLOYMENT_TARGET="${MIN_MACOS}" -DBUILD_SHARED_LIBS=OFF \
+        -DBUILD_TESTING=OFF -DENABLE_SASL=OFF -DENABLE_DTRACE=OFF -DENABLE_OPENSSL_CRYPTO=OFF -DBUILD_DOCS=OFF \
+        -DENABLE_MEMASLAP=OFF
+    run_logged dep-libmemcached cmake --build "${src}/_build" -j "${JOBS}"
+    run_logged dep-libmemcached cmake --install "${src}/_build"
+    rm -f "${DEPS}"/lib/libmemcached*.dylib "${DEPS}"/lib/libhashkit*.dylib
+}

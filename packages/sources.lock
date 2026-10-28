@@ -76,3 +76,24 @@ typesense-arm64    30.2  https://dl.typesense.org/releases/30.2/typesense-server
 typesense-x86_64   30.2  https://dl.typesense.org/releases/30.2/typesense-server-30.2-darwin-amd64.tar.gz                      6aa4d2d85838e03fdde9dcef4bf1584a46fc1840a215e5cbed288b63365eae75
 # Corresponding source of GPL vendor binaries (mirrored by scripts/publish-packages.sh, not built)
 typesense-src      30.2  https://github.com/typesense/typesense/archive/refs/tags/v30.2.tar.gz                                 98ce13b5f05b68ff280b2e4b463c9a0f3be303d2c83a1e18ffbddf90f2b19ad1
+# Phase 5c – tunnel clients (official release archives; frp: frp_sha256_checksums.txt, cloudflared: GitHub asset digest,
+# binary signed with Cloudflare's Developer ID 68WVV388M8)
+frp-arm64          0.71.1    https://github.com/fatedier/frp/releases/download/v0.71.1/frp_0.71.1_darwin_arm64.tar.gz       d15d0324b99e14619c9aa46e37f6db588c06a09be4bc6f7948890b6b61077842
+frp-x86_64         0.71.1    https://github.com/fatedier/frp/releases/download/v0.71.1/frp_0.71.1_darwin_amd64.tar.gz       8acb59b6fb998cc8d209d1373d90bf70fa5ec3efeb4dfbc7bda6ce3abd78cb45
+cloudflared-arm64  2026.10.5 https://github.com/cloudflare/cloudflared/releases/download/2026.10.5/cloudflared-darwin-arm64.tgz  184c7d4f5f977348243a6d7ca8f6cf6073b9b2746cfe8c1fe15aa59e9a522bf0
+cloudflared-x86_64 2026.10.5 https://github.com/cloudflare/cloudflared/releases/download/2026.10.5/cloudflared-darwin-amd64.tgz  6699392fed92367808c248c2d90bed66e49bbf66e1b4ee3e4141230f3f7391b3
+# Phase 5d – PHP extensions. Libraries: checksums from the Homebrew formulae (2026-10-28); PECL archives and
+# libmemcached (no published checksums) pinned at first download from pecl.php.net / github.com over HTTPS.
+gmp                 6.3.0     https://ftpmirror.gnu.org/gmp/gmp-6.3.0.tar.xz                                        a3c2b80201b89e68616f4ad30bc66aee4927c3ce50e33929ca819d5c43538898
+gettext             1.0       https://ftpmirror.gnu.org/gettext/gettext-1.0.tar.gz                                  85d99b79c981a404874c02e0342176cf75c7698e2b51fe41031cf6526d974f1a
+tidy-html5          5.8.0     https://github.com/htacg/tidy-html5/archive/refs/tags/5.8.0.tar.gz                    59c86d5b2e452f63c5cdb29c866a12a4c55b1741d7025cf2f3ce0cde99b0660e
+libmemcached        1.1.4     https://github.com/awesomized/libmemcached/archive/refs/tags/1.1.4.tar.gz             c477e1f6510e1dc698e84f3717ce690a8f65b94c616ecaa62306cce0f5e3116a
+pecl-xdebug         3.5.3     https://pecl.php.net/get/xdebug-3.5.3.tgz                                             f073de91bea046106abf4d6071c963ea71e58571df6ce58948ceca89d121cb2d
+pecl-redis          6.3.0     https://pecl.php.net/get/redis-6.3.0.tgz                                              0d5141f634bd1db6c1ddcda053d25ecf2c4fc1c395430d534fd3f8d51dd7f0b5
+pecl-apcu           5.1.28    https://pecl.php.net/get/apcu-5.1.28.tgz                                              ca9c1820810a168786f8048a4c3f8c9e3fd941407ad1553259fb2e30b5f057bf
+pecl-igbinary       3.2.17RC1 https://pecl.php.net/get/igbinary-3.2.17RC1.tgz                                       91da821443db125282a6aea039f24588dd28ff5d71e8187f6ecc41165bceafbc
+pecl-msgpack        3.0.1     https://pecl.php.net/get/msgpack-3.0.1.tgz                                            e30be355ab79aaea4568692fbd6073fd7c7f50ea8d3cf12edce40fc0c921d868
+pecl-mongodb        2.5.5     https://pecl.php.net/get/mongodb-2.5.5.tgz                                            0eaf84ff709f73183d80597f31ff02937f6aefde01eb895a0aa19334a290cec0
+pecl-memcached      3.4.0     https://pecl.php.net/get/memcached-3.4.0.tgz                                          c163434eb0da97c8f45c7ad41d979d381f8b81c49402b1b90b063987fb37972e
+pecl-pcov           1.0.12    https://pecl.php.net/get/pcov-1.0.12.tgz                                              23255c8c9335a9636ccb743f5302436a97a582a0bbde9869485be911bbc15da8
+pecl-yaml           2.3.0     https://pecl.php.net/get/yaml-2.3.0.tgz                                               bc8404807a3a4dc896b310af21a7f8063aa238424ff77f27eb6ffa88b5874b8a

@@ -40,7 +40,8 @@ mkdir -p "${CACHE}" "${SRC}" "${DEPS}" "${STAGE}" "${DIST}" "${LOGS}" "${TOOLS}"
 
 # Build tools only (never linked): pkgconf and cmake from Homebrew, exposed through a private
 # bin directory so nothing else from /opt/homebrew or other dev environments leaks into builds.
-for tool in pkgconf cmake; do
+# autoconf/autoheader: phpize for the PECL extensions.
+for tool in pkgconf cmake autoconf autoheader; do
     if [[ ! -x "${TOOLS}/${tool}" ]]; then
         found="$(PATH="/opt/homebrew/bin:/usr/local/bin" command -v "${tool}" || true)"
         [[ -n "${found}" ]] || { echo "Missing build tool ${tool} (brew install ${tool})" >&2; exit 1; }
@@ -70,7 +71,7 @@ log() { printf '\033[1m==> %s\033[0m\n' "$*"; }
 mkdir -p "${DEPS}/lib/pkgconfig"
 for system_lib in "zlib:z:1.2.12:" "bzip2:bz2:1.0.8:" "sqlite3:sqlite3:3.43.2:" "libcurl:curl:8.7.1:" \
     "libxml-2.0:xml2:2.9.13:-I${SDKROOT}/usr/include/libxml2" "libedit:edit:3.1:" \
-    "libffi:ffi:3.4.0:-I${SDKROOT}/usr/include/ffi"; do
+    "libffi:ffi:3.4.0:-I${SDKROOT}/usr/include/ffi" "libxslt:xslt:1.1.35:" "libexslt:exslt:0.8.20:"; do
     IFS=: read -r pc_name lib_name lib_version cflags <<<"${system_lib}"
     printf 'Name: %s\nDescription: %s from the macOS SDK\nVersion: %s\nLibs: -l%s\nCflags: %s\n' \
         "${pc_name}" "${pc_name}" "${lib_version}" "${lib_name}" "${cflags}" >"${DEPS}/lib/pkgconfig/${pc_name}.pc"

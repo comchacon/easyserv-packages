@@ -38,6 +38,8 @@ releases. Each package keeps its upstream license:
 | Meilisearch | MIT | https://www.meilisearch.com |
 | Typesense | GPL-3.0 | https://typesense.org |
 | MinIO (last community release, upstream archived) | AGPL-3.0 | https://github.com/minio/minio |
+| frp client (frpc) | Apache-2.0 | https://github.com/fatedier/frp |
+| cloudflared (signed by Cloudflare) | Apache-2.0 | https://github.com/cloudflare/cloudflared |
 | libyaml (statically linked into Ruby) | MIT | https://github.com/yaml/libyaml |
 | OpenSSL (statically linked) | Apache-2.0 | https://www.openssl.org |
 | ICU (statically linked) | Unicode License v3 | https://icu.unicode.org |
